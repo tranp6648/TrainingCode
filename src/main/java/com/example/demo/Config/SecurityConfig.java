@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("api/auth/login").permitAll()
-                        .requestMatchers("/api/products/all", "/api/categories", "/api/products").hasRole("ADMIN")
+                        .requestMatchers("/api/products/all", "/api/categories","/api/categories/{id}", "/api/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)

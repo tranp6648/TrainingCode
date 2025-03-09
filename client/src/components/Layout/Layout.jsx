@@ -1,5 +1,5 @@
 import {useNavigate} from "react-router-dom";
-import '../../bootstrap/css/bootstrap.min.css';
+import '../../bootstrap/css/bootstrap.css';
 import '../../dist/css/AdminLTE.min.css';
 import '../../dist/css/skins/_all-skins.min.css';
 import '../../plugins/iCheck/flat/blue.css';

@@ -1,6 +1,38 @@
 import {api} from "../Url/api";
 
 const BaseUrl = api();
+export const remove=async (id,token)=>{
+    try {
+        const response=await fetch(`${BaseUrl}categories/${id}`,{
+            method:'DELETE',
+            headers:{
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        });
+        return await response.json();
+    }catch (error) {
+        console.log(error);
+    }
+}
+export const update=async (id,categoryDto,token)=>{
+    try {
+        const response=await fetch(`${BaseUrl}categories/${id}`,{
+            method:'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json', // Specify JSON content
+            },
+            body:JSON.stringify({name:categoryDto.updateName,description:categoryDto.updateContent}),
+        });
+
+
+        // Return the response as JSON if the request is successful
+        return await response.json();
+    }catch (error){
+    console.log(error);
+    }
+}
 export const add = async (categoryDto, token) => {
     try {
         const response = await fetch(`${BaseUrl}categories`, {
