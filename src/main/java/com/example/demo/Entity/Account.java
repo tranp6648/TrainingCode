@@ -3,10 +3,19 @@ package com.example.demo.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "account")
-public class Account {
+public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -27,36 +36,32 @@ public class Account {
     @Column(name = "role", nullable = false, length = 20)
     private String role;
 
-    public Integer getId() {
-        return id;
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
     }
 
-    public String getUsername() {
-        return username;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 
-    public String getPassword() {
-        return password;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
 }

@@ -1,4 +1,4 @@
-package com.example.demo.DTO;
+package com.example.demo.DTO.Response;
 
 public class ResponseUtil {
     public static ApiResponse SuccessNotData(String message) {
@@ -11,5 +11,8 @@ public class ResponseUtil {
 
     public static ApiResponse Error(String message) {
         return new ApiResponse(500, message);
+    }
+    public static <T> ApiResponse<T>ErrorStatus(int status, String message) {
+        return new ApiResponse(status, message);
     }
 }

@@ -1,7 +1,9 @@
 package com.example.demo.Controller;
 
-import com.example.demo.DTO.*;
+import com.example.demo.DTO.Response.ApiResponse;
+import com.example.demo.DTO.Response.ResponseUtil;
 import com.example.demo.Entity.Category;
+import com.example.demo.Entity.Product;
 import com.example.demo.Service.CategoryService;
 import com.example.demo.Service.ProductService;
 import jakarta.validation.Valid;
@@ -21,7 +23,7 @@ public class CategoryController {
     private ProductService productService;
 
     @PostMapping("{categoryId}/products")
-    public ResponseEntity<Object> addProductByCategory(@PathVariable int categoryId, @Valid @RequestBody ProductByCategoryDTO product, BindingResult bindingResult) {
+    public ResponseEntity<Object> addProductByCategory(@PathVariable int categoryId, @Valid @RequestBody Product product, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Validation errors: ");
             bindingResult.getFieldErrors().forEach(error ->
@@ -54,7 +56,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@Valid @RequestBody CategoryDTO categoryDTO, BindingResult bindingResult) {
+    public ResponseEntity<Object> add(@Valid @RequestBody Category category, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Validation errors: ");
@@ -64,7 +66,7 @@ public class CategoryController {
             ApiResponse apiResponse = ResponseUtil.Error(errorMessages.toString());
             return ResponseEntity.badRequest().body(apiResponse);
         }
-        if (categoryService.addCategory(categoryDTO)) {
+        if (categoryService.create(category)) {
             ApiResponse apiResponse = ResponseUtil.SuccessNotData("Category added successfully");
             return ResponseEntity.ok(apiResponse);
         } else {
@@ -76,7 +78,7 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable int id, @Valid @RequestBody CategoryDTO categoryDTO, BindingResult bindingResult) {
+    public ResponseEntity<Object> update(@PathVariable int id, @Valid @RequestBody Category category, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Validation errors: ");
             bindingResult.getFieldErrors().forEach(error ->
@@ -85,7 +87,7 @@ public class CategoryController {
             ApiResponse apiResponse = ResponseUtil.Error(errorMessages.toString());
             return ResponseEntity.badRequest().body(apiResponse);
         }
-        Category updateCategory = categoryService.update(id, categoryDTO);
+        Category updateCategory = categoryService.update(id, category);
         if (updateCategory != null) {
             ApiResponse apiResponse = ResponseUtil.SuccessData("Category updated successfully", updateCategory);
             return ResponseEntity.ok(apiResponse);
@@ -98,7 +100,7 @@ public class CategoryController {
     @GetMapping("{id}")
     public ResponseEntity<Object> getCategoriesById(@PathVariable int id) {
         try {
-            ApiResponse apiResponse = ResponseUtil.SuccessData("Category By Id", categoryService.getCategoryById(id));
+            ApiResponse apiResponse = ResponseUtil.SuccessData("Category By Id", categoryService.getById(id));
             return ResponseEntity.ok(apiResponse);
         } catch (Exception e) {
             e.printStackTrace();

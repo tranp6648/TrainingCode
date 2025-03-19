@@ -1,8 +1,7 @@
 package com.example.demo.Controller;
 
-import com.example.demo.DTO.ApiResponse;
-import com.example.demo.DTO.ProductDTO;
-import com.example.demo.DTO.ResponseUtil;
+import com.example.demo.DTO.Response.ApiResponse;
+import com.example.demo.DTO.Response.ResponseUtil;
 import com.example.demo.Entity.Product;
 import com.example.demo.Service.ProductService;
 import jakarta.validation.Valid;
@@ -35,7 +34,7 @@ public class ProductController {
     @GetMapping("/all")
     public ResponseEntity<Object> getAll() {
         try {
-            ApiResponse apiResponse = ResponseUtil.SuccessData("List Product", productService.findAll());
+            ApiResponse apiResponse = ResponseUtil.SuccessData("List Product", productService.getAll());
             return ResponseEntity.ok(apiResponse);
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,7 +56,7 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> update(@PathVariable int id, @Valid @RequestBody ProductDTO productDTO, BindingResult bindingResult) {
+    public ResponseEntity<Object> update(@PathVariable int id, @Valid @RequestBody Product productDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Validation errors: ");
             bindingResult.getFieldErrors().forEach(error ->
@@ -89,7 +88,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> add(@Valid @RequestBody ProductDTO productDTO, BindingResult bindingResult) {
+    public ResponseEntity<Object> add(@Valid @RequestBody Product productDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Validation errors: ");
             bindingResult.getFieldErrors().forEach(error ->
@@ -98,12 +97,9 @@ public class ProductController {
             ApiResponse apiResponse = ResponseUtil.Error(errorMessages.toString());
             return ResponseEntity.badRequest().body(apiResponse);
         }
-        if (productService.add(productDTO)) {
-            ApiResponse apiResponse = ResponseUtil.SuccessNotData("Add Product Success");
-            return ResponseEntity.ok(apiResponse);
-        } else {
-            ApiResponse apiResponse = ResponseUtil.SuccessNotData("Add Product Failed");
-            return ResponseEntity.badRequest().body(apiResponse);
-        }
+
+        ApiResponse apiResponse = ResponseUtil.SuccessNotData("Add Product Success");
+        return ResponseEntity.ok(apiResponse);
+
     }
 }

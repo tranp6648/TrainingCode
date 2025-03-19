@@ -1,9 +1,8 @@
-package com.example.demo.Service;
-
-import com.example.demo.DTO.CategoryDTO;
+package com.example.demo.Service.implement;
 import com.example.demo.Entity.Category;
+import com.example.demo.Exception.CRUDException;
 import com.example.demo.Repository.CategoryRepository;
-import org.modelmapper.ModelMapper;
+import com.example.demo.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,18 +13,24 @@ import java.util.Optional;
 public class CategoryServiceImplement implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
-    public boolean addCategory(CategoryDTO categoryDTO) {
+    public boolean create(Category category) {
         try {
-            Category category = modelMapper.map(categoryDTO, Category.class);
             categoryRepository.save(category);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+          throw new CRUDException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        try {
+            categoryRepository.deleteById(id);
+            return true;
+        }catch (Exception e) {
+            throw new CRUDException(e.getMessage());
         }
     }
 
@@ -40,7 +45,7 @@ public class CategoryServiceImplement implements CategoryService {
     }
 
     @Override
-    public Category getCategoryById(int id) {
+    public Category getById(Integer id) {
         try {
             return categoryRepository.findById(id).get();
         } catch (Exception e) {
@@ -50,32 +55,20 @@ public class CategoryServiceImplement implements CategoryService {
     }
 
     @Override
-    public Category update(int id, CategoryDTO categoryDTO) {
+    public Category update(Integer integer, Category category) {
         try {
-            Optional<Category> optionalCategory = categoryRepository.findById(id);
+            Optional<Category> optionalCategory = categoryRepository.findById(integer);
             if (optionalCategory.isPresent()) {
-                Category category = optionalCategory.get();
-                category.setName(categoryDTO.getName());
-                category.setDescription(categoryDTO.getDescription());
-                categoryRepository.save(category);
-                return category;
+                Category categorySave = optionalCategory.get();
+                categorySave.setName(category.getName());
+                categorySave.setDescription(category.getDescription());
+                categoryRepository.save(categorySave);
+                return categorySave;
             } else {
                 return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Override
-    public boolean delete(int id) {
-        try {
-            categoryRepository.deleteById(id);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new CRUDException(e.getMessage());
         }
     }
 }
