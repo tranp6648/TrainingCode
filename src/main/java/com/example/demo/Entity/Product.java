@@ -1,5 +1,6 @@
 package com.example.demo.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -32,9 +33,14 @@ public class Product {
     private String description;
 
     @NotNull
+    @Column(name = "category_id", nullable = false)
+    private Integer categoryId;
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Category category;
+
+
 
 
 }

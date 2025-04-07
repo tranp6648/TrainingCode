@@ -1,4 +1,5 @@
 package com.example.demo.Service.implement;
+
 import com.example.demo.Entity.Category;
 import com.example.demo.Exception.CRUDException;
 import com.example.demo.Repository.CategoryRepository;
@@ -11,8 +12,12 @@ import java.util.Optional;
 
 @Service
 public class CategoryServiceImplement implements CategoryService {
+    private final CategoryRepository categoryRepository;
+
     @Autowired
-    private CategoryRepository categoryRepository;
+    public CategoryServiceImplement(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Override
     public boolean create(Category category) {
@@ -20,7 +25,7 @@ public class CategoryServiceImplement implements CategoryService {
             categoryRepository.save(category);
             return true;
         } catch (Exception e) {
-          throw new CRUDException(e.getMessage());
+            throw new CRUDException(e.getMessage());
         }
     }
 
@@ -29,7 +34,7 @@ public class CategoryServiceImplement implements CategoryService {
         try {
             categoryRepository.deleteById(id);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new CRUDException(e.getMessage());
         }
     }
@@ -39,18 +44,16 @@ public class CategoryServiceImplement implements CategoryService {
         try {
             return categoryRepository.findAll();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new CRUDException(e.getMessage());
         }
     }
 
     @Override
     public Category getById(Integer id) {
         try {
-            return categoryRepository.findById(id).get();
+            return categoryRepository.findById(id).orElseThrow(() -> new CRUDException("Category Not Found with ID:" + id));
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new CRUDException(e.getMessage());
         }
     }
 

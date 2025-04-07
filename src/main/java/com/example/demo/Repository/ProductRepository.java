@@ -13,7 +13,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p from  Product  p")
     Page<Product> findAllPaginate(Pageable pageable);
-
-    @Query("SELECT p from Product p where p.category.id = :categoryId and p.id = :productId")
-    Product findByCategoryProduct(@Param("categoryId") int categoryId, @Param("productId") int productId);
 }

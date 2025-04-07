@@ -23,29 +23,29 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AccountController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtService jwtService;
-    @PostMapping("register")
-    public ResponseEntity<Object>register(@RequestBody Account account) {
-        try {
-            if(userService.create(account)) {
-                ApiResponse apiResponse=ResponseUtil.SuccessNotData("Register Success");
-                return ResponseEntity.ok(apiResponse);
+    private final UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-            }else{
-                ApiResponse apiResponse=ResponseUtil.Error("Register Fail");
-                return ResponseEntity.badRequest().body(apiResponse);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            ApiResponse apiResponse = ResponseUtil.Error("Login Failed");
+    @Autowired
+    public AccountController(UserService userService, AuthenticationManager authenticationManager, JwtService jwtService) {
+        this.userService = userService;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+    }
+
+    @PostMapping("register")
+    public ResponseEntity<Object> register(@RequestBody Account account) {
+        try {
+            userService.create(account);
+            ApiResponse<Void> apiResponse = ResponseUtil.SuccessNotData("Register Success");
+            return ResponseEntity.ok(apiResponse);
+        } catch (Exception e) {
+            ApiResponse<Void> apiResponse = ResponseUtil.Error("Login Failed");
             return ResponseEntity.badRequest().body(apiResponse);
         }
     }
+
     @PostMapping("login")
     public ResponseEntity<Object> login(@RequestBody LoginDTO loginDTO) {
         try {
@@ -60,15 +60,12 @@ public class AccountController {
                     .map(role -> role.replace("ROLE_", ""))
                     .collect(Collectors.toList());
             String token = jwtService.generateToken(authentication.getName(), roles);
-            ApiResponse apiResponse = ResponseUtil.SuccessData("Login Success", token);
+            ApiResponse<String> apiResponse = ResponseUtil.SuccessData("Login Success", token);
             return ResponseEntity.ok(apiResponse);
         } catch (Exception e) {
-            e.printStackTrace();
-            ApiResponse apiResponse = ResponseUtil.Error("Login Failed");
+            ApiResponse<Void> apiResponse = ResponseUtil.Error("Login Failed");
             return ResponseEntity.badRequest().body(apiResponse);
         }
 
     }
-
-
 }

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,15 +19,20 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
+    private final UserServiceImplement userServiceImplement;
+    private final JWTTokenFilter jwtTokenFilter;
+
     @Autowired
-    private UserServiceImplement userServiceImplement;
-    @Autowired
-    private JWTTokenFilter jwtTokenFilter;
+    public SecurityConfig(UserServiceImplement userServiceImplement, JWTTokenFilter jwtTokenFilter) {
+        this.userServiceImplement = userServiceImplement;
+        this.jwtTokenFilter = jwtTokenFilter;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -50,20 +55,21 @@ public class SecurityConfig {
                 .csrf(cs -> cs.disable())
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("api/auth/login").permitAll()
-                        .requestMatchers("/api/products/all", "/api/categories","/api/categories/{id}", "/api/products").hasRole("ADMIN")
+                        .requestMatchers("api/auth/login", "api/auth/register").permitAll()
+                        .requestMatchers("/api/products/all", "/api/categories", "/api/categories/{id}", "/api/products").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults());
         return httpSecurity.build();
     }
+
     @Bean
     public CorsConfigurationSource corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
         config.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-requested-with", "x-auth-token"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         source.registerCorsConfiguration("/**", config);

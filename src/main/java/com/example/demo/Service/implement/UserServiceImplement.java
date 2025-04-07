@@ -15,8 +15,12 @@ import java.util.List;
 
 @Service
 public class UserServiceImplement implements UserService {
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserServiceImplement(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,7 +43,7 @@ public class UserServiceImplement implements UserService {
         try {
             userRepository.save(user);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new CRUDException(e.getMessage());
         }
     }

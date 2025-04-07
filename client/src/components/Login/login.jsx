@@ -34,7 +34,7 @@ function Login() {
         }
     }
     return (
-        <div style={{paddingBottom:'10vh',paddingTop:'10vh'}} className='login-page'>
+        <div style={{paddingBottom:'10vh',paddingTop:'18vh'}} className='login-page'>
             <div className="login-box">
                 <div className="login-logo">
                     <a href="../../index2.html"><b>Admin</b>LTE</a>
@@ -60,16 +60,10 @@ function Login() {
                         </div>
                     </form>
 
-                    <div className="social-auth-links text-center">
-                        <p>- OR -</p>
-                        <a href="#" className="btn btn-block btn-social btn-facebook btn-flat"><i
-                            className="fa fa-facebook"></i> Sign in using Facebook</a>
-                        <a href="#" className="btn btn-block btn-social btn-google-plus btn-flat"><i
-                            className="fa fa-google-plus"></i> Sign in using Google+</a>
-                    </div>
 
 
-                    <a href="#">I forgot my password</a><br/>
+
+
                     <a href="register.html" className="text-center">Register a new membership</a>
 
                 </div>
